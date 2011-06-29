@@ -12,7 +12,7 @@ USER_AGENT="AT"
 
 username="$1"
 
-userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}"
+userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/public"
 
 if [[ -f "${userdir}/.incomplete" ]]
 then
