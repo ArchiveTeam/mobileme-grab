@@ -45,6 +45,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?><ziplist xmlns="http://user.mac.com
 for image_url in ${images[@]}
 do
   image_path=${image_url/#http:\/\/gallery.me.com\//}
+  image_path=${image_path/%\/large.jpg/.jpg}
   image_path=${image_path/%\/web.jpg/.jpg}
   image_path=${image_path/%\/video.MOV/.MOV}
   echo "<entry><name>${image_path}</name><href>${image_url}</href></entry>" >> "${userdir}/ziplist.xml"
