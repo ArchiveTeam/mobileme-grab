@@ -2,4 +2,5 @@ Here be scripts for downloading Me.com.
 
 So far:
 dld-public-me-com.sh ${USERNAME}
+dld-gallery-me-com.sh ${USERNAME}
 
