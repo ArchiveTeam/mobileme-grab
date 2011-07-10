@@ -17,13 +17,13 @@ userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/galler
 if [[ -f "${userdir}/.incomplete" ]]
 then
   echo "Deleting incomplete result for ${username}"
-#  rm -rf "${userdir}"
+  rm -rf "${userdir}"
 fi
 
 if [[ -d "${userdir}" ]]
 then
   echo "Already downloaded ${username}"
-#  exit 2
+  exit 2
 fi
 
 mkdir -p "${userdir}"
