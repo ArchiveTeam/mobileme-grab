@@ -70,7 +70,7 @@ $PHANTOMJS discover.coffee "http://${domain}/${username}" > urls-$$.txt
 count=`cat urls-$$.txt | wc -l`
 
 echo " - Downloading (${count} files)"
-$WGET_WARC -q -i urls-$$.txt -O /dev/null --warc-file="$userdir/$username" --warc-max-size=inf
+$WGET_WARC -nv -o "$userdir/wget.log" -i urls-$$.txt -O /dev/null --warc-file="$userdir/$username" --warc-max-size=inf
 
 rm urls-$$.txt
 
