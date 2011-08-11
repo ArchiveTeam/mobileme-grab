@@ -2,6 +2,9 @@
 #
 # Script for downloading the contents of gallery.me.com for one user.
 #
+# This script creates a separate zip file for each album, which should
+# make it possible to download very large galleries.
+#
 # Usage:   dld-gallery-me-com.py ${USERNAME}
 #
 #
@@ -30,8 +33,7 @@ def slugify(value):
   return value
 
 
-username = 'aaaashy'
-username = 'aaen'
+username = sys.argv[1]
 
 userdir = "data/%s/%s/%s/%s/gallery" % (username[0:1], username[0:2], username[0:3], username)
 
@@ -95,6 +97,10 @@ else:
         url = photo['largeImageUrl']
       elif 'videoUrl' in photo:
         url = photo['videoUrl']
+      elif 'webImageUrl' in photo:
+        url = photo['webImageUrl']
+      else:
+        print photo
       
       name = url
       name = name.replace('http://gallery.me.com/', '')
@@ -111,7 +117,7 @@ else:
       entry.appendChild(el)
       root.appendChild(entry)
     
-    print ' - Requesting zip for album %s' % album_name
+    print ' - Requesting zip for album %s (%d photos)' % (album_name, len(album_data['photos']))
     conn = httplib.HTTPConnection('gallery.me.com')
     conn.request('POST', '/%s?webdav-method=ZIPLIST' % username, zipdoc.toxml(), {'Content-Type':'text/xml; charset="utf-8"'})
     resp = conn.getresponse()

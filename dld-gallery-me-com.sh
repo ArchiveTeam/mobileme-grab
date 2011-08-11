@@ -2,6 +2,9 @@
 #
 # Script for downloading the contents of gallery.me.com for one user.
 #
+# This script makes one single large zip file for each gallery, which
+# can cause problems when downloading very large galleries.
+#
 # Usage:   dld-gallery-me-com.sh ${USERNAME}
 #
 #
@@ -40,6 +43,12 @@ curl "http://gallery.me.com/${username}?webdav-method=truthget&feedfmt=json&dept
 
 images=( `grep -o -E '"(largeImageUrl|videoUrl)"\s*:\s*"http:[^"]+"' "${userdir}/index.json" | grep -o -E 'http://gallery[^"]+' `)
 echo "  - ${#images[@]} images"
+
+if [[ ${#images[@]} -eq 0 ]]
+then
+  rm "${userdir}/.incomplete"
+  exit 0
+fi
 
 echo '<?xml version="1.0" encoding="utf-8" ?><ziplist xmlns="http://user.mac.com/properties/">' > "${userdir}/ziplist.xml"
 for image_url in ${images[@]}
