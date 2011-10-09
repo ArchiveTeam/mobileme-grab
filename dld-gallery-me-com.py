@@ -128,13 +128,16 @@ else:
     errors = False
     for status in respdoc.getElementsByTagName('status'):
       if status.firstChild.nodeValue != 'HTTP/1.1 200 OK':
-        print " - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
+        if status.parentNode.getElementsByTagName('href')[0].firstChild is None:
+          print " - Error zipping something"
+        else:
+          print " - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
         errors = True
         sys.exit(2)
     
     if not errors:
       print ' - Downloading zip for album %s' % album_name
-      ret = system("curl 'http://gallery.me.com/%s?webdav-method=ZIPGET&token=%s' > '%s.zip'" % (username, zip_token, album_name))
+      ret = system("curl 'http://gallery.me.com/%s?webdav-method=ZIPGET&token=%s' > '%s/%s.zip'" % (username, zip_token, userdir, album_name))
       if not ret == 0:
         print " - Error downloading."
         sys.exit(2)
