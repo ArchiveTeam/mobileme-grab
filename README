@@ -1,8 +1,11 @@
 Here be scripts for downloading Me.com.
 
-So far:
+All-in-one:
+dld-user.sh ${USERNAME}
+
+Single:
 dld-public-me-com.sh ${USERNAME}
 dld-gallery-me-com.py ${USERNAME}
 dld-web-me-com.sh ${USERNAME}
-dld-web-me-com.sh ${USERNAME} homepage.mac.com
+dld-homepage-mac-com.sh ${USERNAME}
 
