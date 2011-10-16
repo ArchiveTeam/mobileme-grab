@@ -26,7 +26,6 @@ fi
 USER_AGENT="AT"
 
 username="$1"
-
 userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/web"
 
 if [[ -f "${userdir}/.incomplete" ]]
@@ -54,7 +53,7 @@ echo " done."
 
 echo -n " - Downloading (${count} files)..."
 $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
-    --warc-file="$userdir/$username" --warc-max-size=inf \
+    --warc-file="$userdir/web-me-com-$username" --warc-max-size=inf \
     --warc-header="operator: Archive Team" \
     --warc-header="mobileme: web.me.com, ${username}"
 echo " done."
