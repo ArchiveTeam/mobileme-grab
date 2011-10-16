@@ -47,7 +47,8 @@ fi
 mkdir -p "${userdir}"
 touch "${userdir}/.incomplete"
 
-echo -n "Downloading ${username} (takes a while)..."
+echo "Downloading ${username}"
+echo -n " - Running wget (takes a while)..."
 
 $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
     --directory-prefix="$userdir/files/" \
@@ -58,7 +59,8 @@ $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
     --warc-header="mobileme: homepage.mac.com, ${username}"
 rm -rf "$userdir/files/"
 
-echo -n " done.  "
+echo " done."
+echo -n " - Result: "
 du -hs "$userdir/homepage-mac-com-$username"*
 
 rm "${userdir}/.incomplete"

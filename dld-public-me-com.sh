@@ -55,7 +55,7 @@ else
   # grep for href, strip <D:href>/ix/
   resources=(`grep -o -E "<D:href>[^<]+" "$userdir/DAV.xml" | cut -c 13-`)
 
-  echo -n "${#resources[@]} files "
+  echo -n " - ${#resources[@]} files "
 
   for resource in ${resources[@]}
   do
