@@ -23,6 +23,8 @@ then
   exit 3
 fi
 
+USER_AGENT="AT"
+
 username="$1"
 
 userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/web"
@@ -45,13 +47,16 @@ touch "${userdir}/.incomplete"
 echo "Downloading ${username}"
 
 echo -n " - Discovering urls..."
-$WGET_WARC -q -O "$userdir/webdav-feed.xml" "http://web.me.com/${username}/?webdav-method=truthget&depth=infinity"
+$WGET_WARC -U "$USER_AGENT" -q -O "$userdir/webdav-feed.xml" "http://web.me.com/${username}/?webdav-method=truthget&depth=infinity"
 grep -oE "http://web\.me\.com\/[^\"]+" "$userdir/webdav-feed.xml" > "$userdir/urls.txt"
 count=$( cat "$userdir/urls.txt" | wc -l )
 echo " done."
 
 echo -n " - Downloading (${count} files)..."
-$WGET_WARC -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null --warc-file="$userdir/$username" --warc-max-size=inf
+$WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
+    --warc-file="$userdir/$username" --warc-max-size=inf \
+    --warc-header="operator: Archive Team" \
+    --warc-header="mobileme: web.me.com, ${username}"
 echo " done."
 
 rm "${userdir}/.incomplete"
