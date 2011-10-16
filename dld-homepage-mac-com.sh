@@ -1,31 +1,20 @@
 #!/bin/bash
 #
-# Script for downloading the contents of web.me.com for one user.
+# Script for downloading the contents of homepage.me.com for one user.
 #
-# Usage:   dld-web-me-com.sh ${USERNAME}
+# Usage:   dld-homepage-me-com.sh ${USERNAME}
 #
-# To download homepage.mac.com instead of web.me.com:
-#
-# Usage:   dld-web-me-com.sh ${USERNAME} homepage.mac.com
-#
+# Version 3. Now only for homepage.mac.com.
+#    Scrapped PhantomJS, not really necessary for homepage.mac.com.
 # Version 2. Added homepage.mac.com.
 # Version 1.
 #
 
-if [[ ! -x $PHANTOMJS ]]
-then
-  PHANTOMJS=$(which phantomjs)
-fi
 if [[ ! -x $WGET_WARC ]]
 then
   WGET_WARC=$(which wget)
 fi
 
-if [[ ! -x $PHANTOMJS ]]
-then
-  echo "phantomjs not found. Set the PHANTOMJS environment variable."
-  exit 3
-fi
 if [[ ! -x $WGET_WARC ]]
 then
   echo "wget not found. Set the WGET_WARC environment variable."
@@ -37,16 +26,11 @@ then
   exit 3
 fi
 
+USER_AGENT="AT"
+
 username="$1"
-
-domain="web.me.com"
-userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/web"
-
-if [[ $2 == "homepage.mac.com" ]]
-then
-  domain="homepage.mac.com"
-  userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/homepage"
-fi
+domain="homepage.mac.com"
+userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/homepage"
 
 if [[ -f "${userdir}/.incomplete" ]]
 then
@@ -63,16 +47,19 @@ fi
 mkdir -p "${userdir}"
 touch "${userdir}/.incomplete"
 
-echo "Downloading ${username}"
+echo -n "Downloading ${username} (takes a while)..."
 
-echo " - Discovering urls (takes a while)"
-$PHANTOMJS discover.coffee "http://${domain}/${username}" > urls-$$.txt
-count=`cat urls-$$.txt | wc -l`
+$WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
+    --directory-prefix="$userdir/files/" \
+    -r -l inf --no-remove-listing \
+    --page-requisites "http://homepage.mac.com/$username/" \
+    --warc-file="$userdir/homepage-mac-com-$username" --warc-max-size=inf \
+    --warc-header="operator: Archive Team" \
+    --warc-header="mobileme: homepage.mac.com, ${username}"
+rm -rf "$userdir/files/"
 
-echo " - Downloading (${count} files)"
-$WGET_WARC -nv -o "$userdir/wget.log" -i urls-$$.txt -O /dev/null --warc-file="$userdir/$username" --warc-max-size=inf
-
-rm urls-$$.txt
+echo -n " done.  "
+du -hs "$userdir/homepage-mac-com-$username"*
 
 rm "${userdir}/.incomplete"
 
