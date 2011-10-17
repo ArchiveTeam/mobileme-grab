@@ -70,7 +70,7 @@ else
            --user-agent "${USER_AGENT}" \
            --dump-header "${outfile}.headers" \
          > "${outfile}"
-      if [ ! $? -ne 0 ]
+      if [ $? -ne 0 ]
       then
         echo "  - Error downloading ${resource}"
         exit 1
