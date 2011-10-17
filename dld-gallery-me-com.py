@@ -65,7 +65,7 @@ else:
   doc = json.load(resp)
   albums = dict()
   for record in doc['records']:
-    if record['type'] == 'Photo':
+    if record['type'] == 'Photo' or record['type'] == 'Video':
       if record['album'] not in albums:
         albums[record['album']] = dict(photos=[])
       albums[record['album']]['photos'].append(record)
@@ -118,30 +118,31 @@ else:
       entry.appendChild(el)
       root.appendChild(entry)
     
-    print '   - Requesting zip for album %s (%d photos)' % (album_name, len(album_data['photos']))
-    conn = httplib.HTTPConnection('gallery.me.com')
-    conn.request('POST', '/%s?webdav-method=ZIPLIST' % username, zipdoc.toxml(), {'Content-Type':'text/xml; charset="utf-8"'})
-    resp = conn.getresponse()
-    zip_token = resp.getheader('X-Zip-Token')
-    respdoc = parseString(resp.read())
-    conn.close
-    
-    errors = False
-    for status in respdoc.getElementsByTagName('status'):
-      if status.firstChild.nodeValue != 'HTTP/1.1 200 OK':
-        if status.parentNode.getElementsByTagName('href')[0].firstChild is None:
-          print "   - Error zipping (no files, perhaps?)"
-        else:
-          print "   - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
-        errors = True
-        sys.exit(2)
-    
-    if not errors:
-      print '   - Downloading zip for album %s' % album_name
-      ret = system("curl 'http://gallery.me.com/%s?webdav-method=ZIPGET&token=%s' > '%s/%s.zip'" % (username, zip_token, userdir, album_name))
-      if not ret == 0:
-        print "   - Error downloading zip file."
-        sys.exit(1)
+    if len(album_data['photos']) > 0:
+      print '   - Requesting zip for album %s (%d photos)' % (album_name, len(album_data['photos']))
+      conn = httplib.HTTPConnection('gallery.me.com')
+      conn.request('POST', '/%s?webdav-method=ZIPLIST' % username, zipdoc.toxml(), {'Content-Type':'text/xml; charset="utf-8"'})
+      resp = conn.getresponse()
+      zip_token = resp.getheader('X-Zip-Token')
+      respdoc = parseString(resp.read())
+      conn.close
+      
+      errors = False
+      for status in respdoc.getElementsByTagName('status'):
+        if status.firstChild.nodeValue != 'HTTP/1.1 200 OK':
+          if status.parentNode.getElementsByTagName('href')[0].firstChild is None:
+            print "   - Error zipping"
+          else:
+            print "   - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
+          errors = True
+          sys.exit(2)
+      
+      if not errors:
+        print '   - Downloading zip for album %s' % album_name
+        ret = system("curl 'http://gallery.me.com/%s?webdav-method=ZIPGET&token=%s' > '%s/%s.zip'" % (username, zip_token, userdir, album_name))
+        if not ret == 0:
+          print "   - Error downloading zip file."
+          sys.exit(1)
 
   print "   - Done."
   os.unlink(userdir + "/.incomplete")
