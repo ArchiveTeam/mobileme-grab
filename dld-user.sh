@@ -24,6 +24,7 @@ then
 fi
 
 username="$1"
+time_start=$( date +"%s" )
 
 echo "Downloading ${username} - $(date)"
 
@@ -39,7 +40,13 @@ do
   fi
 done
 
+time_finish=$( date +"%s" )
+seconds_used=$(( time_finish - time_start ))
+minutes=$(( seconds_used / 60 ))
+seconds=$(( seconds_used - (60 * minutes) ))
+
 echo "  Finished ${username} - $(date)"
+echo "  Time elapsed: ${minutes}m ${seconds}s"
 echo
 
 exit 0
