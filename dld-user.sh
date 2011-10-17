@@ -12,6 +12,10 @@
 # Usage:   dld-user.sh ${USERNAME}
 #
 
+# this script needs wget-warc, which you can find on the ArchiveTeam wiki.
+# copy the wget executable to this script's working directory and rename
+# it to wget-warc
+
 if [ ! -x ./wget-warc ]
 then
   echo "wget-warc not found. Download and compile wget-warc and save the"

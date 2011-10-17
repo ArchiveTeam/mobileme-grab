@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 # Script for downloading the contents of a .me.com domain for one user.
 #
 # Usage:   dld-me-com.sh ${DOMAIN} ${USERNAME}
@@ -8,6 +7,9 @@
 #                         public.me.com
 #                         homepage.mac.com
 #
+
+# this script needs wget-warc, which you can find on the ArchiveTeam wiki.
+# set the WGET_WARC environment variable to point to the wget-warc executable.
 
 if [[ ! -x $WGET_WARC ]]
 then
@@ -48,10 +50,15 @@ touch "${userdir}/.incomplete"
 
 echo "  Downloading ${domain}/${username}"
 
+
+# step 1: download the list of files
+
 if [[ "$domain" =~ "public.me.com" ]]
 then
 
   # public.me.com has real WebDAV
+
+  # PROPFIND with Depth: infinity lists all files
   echo -n "   - Discovering urls (XML)..."
   curl "https://public.me.com/ix/${username}/" \
        --silent \
@@ -68,7 +75,7 @@ then
   fi
   echo " done."
 
-  # grep for href, strip <D:href>/ix/
+  # grep for href, strip <D:href> and prepend https://public.me.com
   grep -o -E "<D:href>[^<]+" "$userdir/webdav-feed.xml" | cut -c 9- | awk '/[^\/]$/ { print "https://public.me.com" $1 }' > "$userdir/urls.txt"
   count=$( cat "$userdir/urls.txt" | wc -l )
 
@@ -76,6 +83,8 @@ elif [[ ! "$domain" =~ "homepage.mac.com" ]]
 then
 
   # web.me.com and gallery.me.com use query-string WebDAV
+
+  # there's a json feed...
   echo -n "   - Discovering urls (JSON)..."
   curl "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" \
        --silent --fail \
@@ -89,6 +98,7 @@ then
   fi
   echo " done."
 
+  # ... and an xml feed
   echo -n "   - Discovering urls (XML)..."
   curl "http://${domain}/${username}/?webdav-method=truthget&depth=Infinity" \
        --silent \
@@ -101,6 +111,8 @@ then
   fi
   echo " done."
 
+  # for web.me.com we look at the xml feed, which contains the files,
+  # for gallery.me.com we use the json feed, which lists the images
   if [[ "$domain" =~ "web.me.com" ]]
   then
     grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.xml" | sort | uniq > "$userdir/urls.txt"
@@ -108,14 +120,21 @@ then
     grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.json" | sort | uniq > "$userdir/urls.txt"
   fi
 
+  # let's save the feeds in the warc file
   echo "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" >> "$userdir/urls.txt"
   echo "http://${domain}/${username}/?webdav-method=truthget&depth=Infinity" >> "$userdir/urls.txt"
+
   count=$( cat "$userdir/urls.txt" | wc -l )
 
 fi
 
+
+# step 2: use the url list to download the files
+
 if [[ "$domain" =~ "homepage.mac.com" ]]
 then
+
+  # homepage.mac.com doesn't have a feed with file names, so we'll use wget --mirror
 
   echo -n "   - Running wget --mirror (takes a while)..."
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
@@ -136,6 +155,8 @@ then
   echo " done."
 
 else
+
+  # for the other domains we just grab every url on the list
 
   echo -n "   - Downloading (${count} files)..."
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
