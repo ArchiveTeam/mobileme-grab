@@ -5,6 +5,7 @@
 # Usage:   dld-public-me-com.sh ${USERNAME}
 #
 #
+# Version 2. Better use of exit codes.
 # Version 1.
 #
 
@@ -16,20 +17,20 @@ userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/public
 
 if [[ -f "${userdir}/.incomplete" ]]
 then
-  echo "Deleting incomplete result for ${username}"
+  echo "  Deleting incomplete result for public.me.com/${username}"
   rm -rf "${userdir}"
 fi
 
 if [[ -d "${userdir}" ]]
 then
-  echo "Already downloaded ${username}"
+  echo "  Already downloaded public.me.com/${username}"
   exit 2
 fi
 
 mkdir -p "${userdir}"
 touch "${userdir}/.incomplete"
 
-echo "Downloading ${username}"
+echo "  Downloading public.me.com/${username}"
 
 # WebDAV's PROPFIND is cool: with "Depth: infinity", it will give us the
 # complete contents of the user's directory with one request
@@ -43,11 +44,10 @@ curl "https://public.me.com/ix/${username}/" \
      --dump-header "${userdir}/DAV.xml.headers" \
    > "$userdir/DAV.xml"
 
-curl_result=$?
-if [[ ! $? ]]
+if [ $? -ne 0 ]
 then
 
-  echo "Error downloading index for ${username}."
+  echo "  - Error downloading index for ${username}."
   exit 1
 
 else
@@ -55,7 +55,7 @@ else
   # grep for href, strip <D:href>/ix/
   resources=(`grep -o -E "<D:href>[^<]+" "$userdir/DAV.xml" | cut -c 13-`)
 
-  echo -n " - ${#resources[@]} files "
+  echo -n "   - ${#resources[@]} files "
 
   for resource in ${resources[@]}
   do
@@ -70,9 +70,9 @@ else
            --user-agent "${USER_AGENT}" \
            --dump-header "${outfile}.headers" \
          > "${outfile}"
-      if [[ ! $? ]]
+      if [ ! $? -ne 0 ]
       then
-        echo "Error downloading ${resource}"
+        echo "  Error downloading ${resource}"
       else
         echo -n "."
       fi
@@ -84,4 +84,6 @@ else
 fi
 
 rm "${userdir}/.incomplete"
+
+exit 0
 

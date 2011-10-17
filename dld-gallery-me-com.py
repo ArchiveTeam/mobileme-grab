@@ -8,6 +8,7 @@
 # Usage:   dld-gallery-me-com.py ${USERNAME}
 #
 #
+# Version 2. Better use of exit codes.
 # Version 1.
 #
 
@@ -38,17 +39,17 @@ username = sys.argv[1]
 userdir = "data/%s/%s/%s/%s/gallery" % (username[0:1], username[0:2], username[0:3], username)
 
 if os.path.isfile(userdir + "/.incomplete"):
-  print "Deleting incomplete result for %s" % username
+  print "  Deleting incomplete result for gallery.me.com/%s" % username
   shutil.rmtree(userdir)
 
 if os.path.isdir(userdir):
-  print "Already downloaded %s" % username
-  sys.exit(1)
+  print "  Already downloaded gallery.me.com/%s" % username
+  sys.exit(2)
 
 os.makedirs(userdir)
 open(userdir + "/.incomplete", "w").close
 
-print 'Downloading %s' % username
+print '  Downloading gallery.me.com/%s' % username
 
 conn = httplib.HTTPConnection('gallery.me.com')
 
@@ -56,7 +57,7 @@ conn.request('GET', '/%s?webdav-method=truthget&feedfmt=json&depth=Infinity' % u
 resp = conn.getresponse()
 
 if not resp.status == 200:
-  print "Error: %s %s" % (resp.status, resp.reason)
+  print "  Error: %s %s" % (resp.status, resp.reason)
   conn.close()
   sys.exit(1)
 
@@ -117,7 +118,7 @@ else:
       entry.appendChild(el)
       root.appendChild(entry)
     
-    print ' - Requesting zip for album %s (%d photos)' % (album_name, len(album_data['photos']))
+    print '   - Requesting zip for album %s (%d photos)' % (album_name, len(album_data['photos']))
     conn = httplib.HTTPConnection('gallery.me.com')
     conn.request('POST', '/%s?webdav-method=ZIPLIST' % username, zipdoc.toxml(), {'Content-Type':'text/xml; charset="utf-8"'})
     resp = conn.getresponse()
@@ -129,21 +130,21 @@ else:
     for status in respdoc.getElementsByTagName('status'):
       if status.firstChild.nodeValue != 'HTTP/1.1 200 OK':
         if status.parentNode.getElementsByTagName('href')[0].firstChild is None:
-          print " - Error zipping something"
+          print "   - Error zipping (no files, perhaps?)"
         else:
-          print " - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
+          print "   - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
         errors = True
         sys.exit(2)
     
     if not errors:
-      print ' - Downloading zip for album %s' % album_name
+      print '   - Downloading zip for album %s' % album_name
       ret = system("curl 'http://gallery.me.com/%s?webdav-method=ZIPGET&token=%s' > '%s/%s.zip'" % (username, zip_token, userdir, album_name))
       if not ret == 0:
-        print " - Error downloading."
-        sys.exit(2)
+        print "   - Error downloading zip file."
+        sys.exit(1)
 
-  print " - Done."
+  print "   - Done."
   os.unlink(userdir + "/.incomplete")
 
-
+  sys.exit(0)
 

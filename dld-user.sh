@@ -11,6 +11,10 @@
 #
 # Usage:   dld-user.sh ${USERNAME}
 #
+# Version 3. Better use of exit codes.
+# Version 2. Check exit codes.
+# Version 1.
+#
 
 if [ ! -x ./wget-warc ]
 then
@@ -21,22 +25,22 @@ fi
 
 username="$1"
 
+echo "Downloading ${username} - $(date)"
+
+commands="./dld-web-me-com.sh ./dld-homepage-mac-com.sh ./dld-gallery-me-com.py ./dld-public-me-com.sh"
+for command in $commands
+do
+  WGET_WARC=./wget-warc $command "$username"
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 2 ]
+  then
+    echo "  Error running ${command}."
+    exit 1
+  fi
+done
+
+echo "  Finished ${username} - $(date)"
 echo
-echo $(date)" - Downloading ${username}"
-echo
-echo $(date)" - web.me.com/${username}:"
-WGET_WARC=./wget-warc ./dld-web-me-com.sh "$username"
-echo
-echo $(date)" - homepage.mac.com/${username}:"
-WGET_WARC=./wget-warc ./dld-homepage-mac-com.sh "$username"
-echo
-echo $(date)" - gallery.me.com/${username}:"
-./dld-gallery-me-com.py "$username"
-echo
-echo $(date)" - public.me.com/${username}:"
-./dld-public-me-com.sh "$username"
-echo
-echo $(date)" - Finished ${username}"
-echo
-echo
+
+exit 0
 
