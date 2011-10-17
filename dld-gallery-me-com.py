@@ -57,9 +57,13 @@ conn.request('GET', '/%s?webdav-method=truthget&feedfmt=json&depth=Infinity' % u
 resp = conn.getresponse()
 
 if not resp.status == 200:
-  print "  Error: %s %s" % (resp.status, resp.reason)
   conn.close()
-  sys.exit(1)
+  if resp.status == 404:
+    print "  Gallery not found."
+    sys.exit(0)
+  else:
+    print "  Error: %s %s" % (resp.status, resp.reason)
+    sys.exit(1)
 
 else:
   doc = json.load(resp)
