@@ -27,10 +27,10 @@ username="$1"
 
 echo "Downloading ${username} - $(date)"
 
-commands="./dld-web-me-com.sh ./dld-homepage-mac-com.sh ./dld-gallery-me-com.sh ./dld-public-me-com.sh"
-for command in $commands
+domains="web.me.com public.me.com gallery.me.com"
+for domain in $domains
 do
-  WGET_WARC=./wget-warc $command "$username"
+  WGET_WARC=./wget-warc ./dld-me-com.sh "$domain" "$username"
   result=$?
   if [ $result -ne 0 ] && [ $result -ne 2 ]
   then
@@ -38,6 +38,14 @@ do
     exit 1
   fi
 done
+
+WGET_WARC=./wget-warc ./dld-homepage-mac-com.sh "$username"
+result=$?
+if [ $result -ne 0 ] && [ $result -ne 2 ]
+then
+  echo "  Error running ${command}."
+  exit 1
+fi
 
 echo "  Finished ${username} - $(date)"
 echo
