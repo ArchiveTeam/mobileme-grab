@@ -60,6 +60,7 @@ if not resp.status == 200:
   conn.close()
   if resp.status == 404:
     print "  Gallery not found."
+    os.unlink(userdir + "/.incomplete")
     sys.exit(0)
   else:
     print "  Error: %s %s" % (resp.status, resp.reason)
