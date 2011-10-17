@@ -58,9 +58,10 @@ $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
     --warc-file="$userdir/homepage-mac-com-$username" --warc-max-size=inf \
     --warc-header="operator: Archive Team" \
     --warc-header="mobileme: homepage.mac.com, ${username}"
-if [ $? -ne 0 ]
+result=$?
+if [ $result -ne 0 ] && [ $result -ne 8 ]
 then
-  echo " ERROR."
+  echo " ERROR ($result)."
   exit 1
 fi
 rm -rf "$userdir/files/"
