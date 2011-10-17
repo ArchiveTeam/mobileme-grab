@@ -11,10 +11,6 @@
 #
 # Usage:   dld-user.sh ${USERNAME}
 #
-# Version 3. Better use of exit codes.
-# Version 2. Check exit codes.
-# Version 1.
-#
 
 if [ ! -x ./wget-warc ]
 then
@@ -27,7 +23,7 @@ username="$1"
 
 echo "Downloading ${username} - $(date)"
 
-domains="web.me.com public.me.com gallery.me.com"
+domains="web.me.com public.me.com gallery.me.com homepage.mac.com"
 for domain in $domains
 do
   WGET_WARC=./wget-warc ./dld-me-com.sh "$domain" "$username"
@@ -38,14 +34,6 @@ do
     exit 1
   fi
 done
-
-WGET_WARC=./wget-warc ./dld-homepage-mac-com.sh "$username"
-result=$?
-if [ $result -ne 0 ] && [ $result -ne 2 ]
-then
-  echo "  Error running ${command}."
-  exit 1
-fi
 
 echo "  Finished ${username} - $(date)"
 echo

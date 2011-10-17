@@ -3,7 +3,10 @@
 # Script for downloading the contents of a .me.com domain for one user.
 #
 # Usage:   dld-me-com.sh ${DOMAIN} ${USERNAME}
-# where DOMAIN is one of  gallery.me.com  web.me.com  public.me.com
+# where DOMAIN is one of  gallery.me.com
+#                         web.me.com
+#                         public.me.com
+#                         homepage.mac.com
 #
 
 if [[ ! -x $WGET_WARC ]]
@@ -47,6 +50,7 @@ echo "  Downloading ${domain}/${username}"
 
 if [[ "$domain" =~ "public.me.com" ]]
 then
+
   # public.me.com has real WebDAV
   echo -n "   - Discovering urls (XML)..."
   curl "https://public.me.com/ix/${username}/" \
@@ -68,7 +72,9 @@ then
   grep -o -E "<D:href>[^<]+" "$userdir/webdav-feed.xml" | cut -c 9- | awk '/[^\/]$/ { print "https://public.me.com" $1 }' > "$userdir/urls.txt"
   count=$( cat "$userdir/urls.txt" | wc -l )
 
-else
+elif [[ ! "$domain" =~ "homepage.mac.com" ]]
+then
+
   # web.me.com and gallery.me.com use query-string WebDAV
   echo -n "   - Discovering urls (JSON)..."
   curl "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" \
@@ -99,21 +105,47 @@ else
   echo "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" >> "$userdir/urls.txt"
   echo "http://${domain}/${username}/?webdav-method=truthget&depth=Infinity" >> "$userdir/urls.txt"
   count=$( cat "$userdir/urls.txt" | wc -l )
+
 fi
 
-echo -n "   - Downloading (${count} files)..."
-$WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
-    --no-check-certificate \
-    --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
-    --warc-header="operator: Archive Team" \
-    --warc-header="mobileme: ${domain}, ${username}"
-result=$?
-if [ $result -ne 0 ] && [ $result -ne 8 ]
+if [[ "$domain" =~ "homepage.mac.com" ]]
 then
-  echo "ERROR ($result)."
-  exit 1
+
+  echo -n "   - Running wget --mirror (takes a while)..."
+  $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
+      --directory-prefix="$userdir/files/" \
+      -r -l inf --no-remove-listing \
+      --page-requisites "http://${domain}/$username/" \
+      --no-check-certificate \
+      --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
+      --warc-header="operator: Archive Team" \
+      --warc-header="mobileme: ${domain}, ${username}"
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 8 ]
+  then
+    echo " ERROR ($result)."
+    exit 1
+  fi
+  rm -rf "$userdir/files/"
+  echo " done."
+
+else
+
+  echo -n "   - Downloading (${count} files)..."
+  $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
+      --no-check-certificate \
+      --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
+      --warc-header="operator: Archive Team" \
+      --warc-header="mobileme: ${domain}, ${username}"
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 8 ]
+  then
+    echo " ERROR ($result)."
+    exit 1
+  fi
+  echo " done."
+
 fi
-echo " done."
 
 echo -n "   - Result: "
 du -hs "$userdir/${domain}-$username"* | cut -f 1
