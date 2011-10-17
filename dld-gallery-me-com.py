@@ -67,7 +67,14 @@ if not resp.status == 200:
     sys.exit(1)
 
 else:
-  doc = json.load(resp)
+  system("curl -s 'http://gallery.me.com/%s?webdav-method=truthget&depth=Infinity' > '%s/webdav-feed.xml'" % (username, userdir))
+
+  json_data = resp.read()
+  f = open("%s/webdav-feed.json" % (userdir), "w")
+  f.write(json_data)
+  f.close()
+
+  doc = json.loads(json_data)
   albums = dict()
   for record in doc['records']:
     if record['type'] == 'Photo' or record['type'] == 'Video':
@@ -139,8 +146,8 @@ else:
             print "   - Error zipping"
           else:
             print "   - Error zipping %s" % status.parentNode.getElementsByTagName('href')[0].firstChild.nodeValue
-          errors = True
-          sys.exit(2)
+#          errors = True
+#          sys.exit(2)
       
       if not errors:
         print '   - Downloading zip for album %s' % album_name
