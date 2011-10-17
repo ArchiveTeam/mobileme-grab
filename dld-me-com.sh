@@ -68,9 +68,10 @@ then
        --data '<?xml version="1.0" encoding="utf-8"?><DAV:propfind xmlns:DAV="DAV:"><DAV:allprop/></DAV:propfind>' \
        --user-agent "${USER_AGENT}" \
      > "$userdir/webdav-feed.xml"
-  if [ $? -ne 0 ]
+  result=$?
+  if [ $result -ne 0 ]
   then
-    echo "  - ERROR."
+    echo " ERROR ($result)."
     exit 1
   fi
   echo " done."
@@ -87,13 +88,13 @@ then
   # there's a json feed...
   echo -n "   - Discovering urls (JSON)..."
   curl "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" \
-       --silent --fail \
+       --silent \
        --user-agent "${USER_AGENT}" \
      > "$userdir/webdav-feed.json"
   result=$?
   if [ $result -ne 0 ]
   then
-    echo " ERROR."
+    echo " ERROR ($result)."
     exit 1
   fi
   echo " done."
@@ -104,9 +105,10 @@ then
        --silent \
        --user-agent "${USER_AGENT}" \
      > "$userdir/webdav-feed.xml"
-  if [ $? -ne 0 ]
+  result=$?
+  if [ $result -ne 0 ]
   then
-    echo " ERROR."
+    echo " ERROR ($result)."
     exit 1
   fi
   echo " done."

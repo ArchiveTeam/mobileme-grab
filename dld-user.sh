@@ -35,7 +35,7 @@ do
   result=$?
   if [ $result -ne 0 ] && [ $result -ne 2 ]
   then
-    echo "  Error running ${command}."
+    echo "  Error downloading from ${domain}."
     exit 1
   fi
 done
