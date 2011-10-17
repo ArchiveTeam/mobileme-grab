@@ -101,7 +101,13 @@ then
   fi
   echo " done."
 
-  grep -oE "http://${domain}/[^/]+/[^\"]+" "$userdir/webdav-feed.json" > "$userdir/urls.txt"
+  if [[ "$domain" =~ "web.me.com" ]]
+  then
+    grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.xml" | sort | uniq > "$userdir/urls.txt"
+  else
+    grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.json" | sort | uniq > "$userdir/urls.txt"
+  fi
+
   echo "http://${domain}/${username}/?webdav-method=truthget&feedfmt=json&depth=Infinity" >> "$userdir/urls.txt"
   echo "http://${domain}/${username}/?webdav-method=truthget&depth=Infinity" >> "$userdir/urls.txt"
   count=$( cat "$userdir/urls.txt" | wc -l )
