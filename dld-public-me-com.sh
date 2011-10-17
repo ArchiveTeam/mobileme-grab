@@ -9,10 +9,25 @@
 # Version 1.
 #
 
+if [[ ! -x $WGET_WARC ]]
+then
+  WGET_WARC=$(which wget)
+  if ! $WGET_WARC --help | grep -q WARC
+  then
+    echo "${WGET_WARC} does not support WARC. Set the WGET_WARC environment variable."
+    exit 3
+  fi
+fi
+
+if [[ ! -x $WGET_WARC ]]
+then
+  echo "wget-warc not found. Set the WGET_WARC environment variable."
+  exit 3
+fi
+
 USER_AGENT="AT"
 
 username="$1"
-
 userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/public"
 
 if [[ -f "${userdir}/.incomplete" ]]
@@ -41,8 +56,7 @@ curl "https://public.me.com/ix/${username}/" \
      --header "Depth: infinity" \
      --data '<?xml version="1.0" encoding="utf-8"?><DAV:propfind xmlns:DAV="DAV:"><DAV:allprop/></DAV:propfind>' \
      --user-agent "${USER_AGENT}" \
-     --dump-header "${userdir}/DAV.xml.headers" \
-   > "$userdir/DAV.xml"
+   > "$userdir/webdav-feed.xml"
 
 if [ $? -ne 0 ]
 then
@@ -53,33 +67,21 @@ then
 else
 
   # grep for href, strip <D:href>/ix/
-  resources=(`grep -o -E "<D:href>[^<]+" "$userdir/DAV.xml" | cut -c 13-`)
+  grep -o -E "<D:href>[^<]+" "$userdir/webdav-feed.xml" | cut -c 9- | awk '/[^\/]$/ { print "https://public.me.com" $1 }' > "$userdir/urls.txt"
+  count=$( cat "$userdir/urls.txt" | wc -l )
 
-  echo -n "   - ${#resources[@]} files "
-
-  for resource in ${resources[@]}
-  do
-    # do not download directories
-    if [[ ! $resource =~ /$ ]]
-    then
-      # download resource
-      outfile="${userdir}/${resource}"
-      mkdir -p `dirname ${outfile}`
-      curl "https://public.me.com/ix/${resource}" \
-           --silent \
-           --user-agent "${USER_AGENT}" \
-           --dump-header "${outfile}.headers" \
-         > "${outfile}"
-      if [ $? -ne 0 ]
-      then
-        echo "  - Error downloading ${resource}"
-        exit 1
-      else
-        echo -n "."
-      fi
-    fi
-  done
-
+  echo -n "   - Downloading (${count} files)..."
+  $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" -i "$userdir/urls.txt" -O /dev/null \
+      --no-check-certificate \
+      --warc-file="$userdir/public-me-com-$username" --warc-max-size=inf \
+      --warc-header="operator: Archive Team" \
+      --warc-header="mobileme: public.me.com, ${username}"
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 8 ]
+  then
+    echo "ERROR ($result)."
+    exit 1
+  fi
   echo " done."
 
 fi
