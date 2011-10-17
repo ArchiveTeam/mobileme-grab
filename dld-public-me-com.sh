@@ -72,7 +72,8 @@ else
          > "${outfile}"
       if [ ! $? -ne 0 ]
       then
-        echo "  Error downloading ${resource}"
+        echo "  - Error downloading ${resource}"
+        exit 1
       else
         echo -n "."
       fi
