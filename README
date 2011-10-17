@@ -1,11 +1,20 @@
 Here be scripts for downloading Me.com.
 
+Before you run these scripts, you should install wget-warc.
+The easiest way to do this is by running
+
+./get-wget-warc.sh
+
+this will download and compile wget-warc and copy the executable
+to the current directory.
+
+
 All-in-one:
-dld-user.sh ${USERNAME}
+ ./dld-user.sh ${USERNAME}
 
 Single:
-dld-public-me-com.sh ${USERNAME}
-dld-gallery-me-com.py ${USERNAME}
-dld-web-me-com.sh ${USERNAME}
-dld-homepage-mac-com.sh ${USERNAME}
+ WGET_WARC=./wget-warc ./dld-public-me-com.sh ${USERNAME}
+ WGET_WARC=./wget-warc ./dld-gallery-me-com.py ${USERNAME}
+ WGET_WARC=./wget-warc ./dld-web-me-com.sh ${USERNAME}
+ WGET_WARC=./wget-warc ./dld-homepage-mac-com.sh ${USERNAME}
 
