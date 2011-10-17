@@ -4,12 +4,6 @@
 #
 # Usage:   dld-homepage-me-com.sh ${USERNAME}
 #
-# Version 4. Better use of exit codes.
-# Version 3. Now only for homepage.mac.com.
-#    Scrapped PhantomJS, not really necessary for homepage.mac.com.
-# Version 2. Added homepage.mac.com.
-# Version 1.
-#
 
 if [[ ! -x $WGET_WARC ]]
 then
@@ -30,8 +24,7 @@ fi
 USER_AGENT="AT"
 
 username="$1"
-domain="homepage.mac.com"
-userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/homepage"
+userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/homepage.mac.com"
 
 if [[ -f "${userdir}/.incomplete" ]]
 then
@@ -55,7 +48,7 @@ $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
     --directory-prefix="$userdir/files/" \
     -r -l inf --no-remove-listing \
     --page-requisites "http://homepage.mac.com/$username/" \
-    --warc-file="$userdir/homepage-mac-com-$username" --warc-max-size=inf \
+    --warc-file="$userdir/homepage.mac.com-$username" --warc-max-size=inf \
     --warc-header="operator: Archive Team" \
     --warc-header="mobileme: homepage.mac.com, ${username}"
 result=$?
@@ -68,7 +61,7 @@ rm -rf "$userdir/files/"
 
 echo " done."
 echo -n "   - Result: "
-du -hs "$userdir/homepage-mac-com-$username"*
+du -hs "$userdir/homepage.mac.com-$username"* | cut -f 1
 
 rm "${userdir}/.incomplete"
 
