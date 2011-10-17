@@ -27,7 +27,7 @@ username="$1"
 
 echo "Downloading ${username} - $(date)"
 
-commands="./dld-web-me-com.sh ./dld-homepage-mac-com.sh ./dld-gallery-me-com.py ./dld-public-me-com.sh"
+commands="./dld-web-me-com.sh ./dld-homepage-mac-com.sh ./dld-gallery-me-com.sh ./dld-public-me-com.sh"
 for command in $commands
 do
   WGET_WARC=./wget-warc $command "$username"
