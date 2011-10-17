@@ -56,6 +56,7 @@ fi
 if grep -q -E "^Not Found$" "$userdir/webdav-feed.xml"
 then
   echo " not found." 
+  rm "${userdir}/.incomplete"
   exit 0
 fi
 grep -oE "http://web\.me\.com\/[^\"]+" "$userdir/webdav-feed.xml" > "$userdir/urls.txt"
