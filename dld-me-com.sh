@@ -118,8 +118,16 @@ then
   if [[ "$domain" =~ "web.me.com" ]]
   then
     grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.xml" | sort | uniq > "$userdir/urls.txt"
+  elif [[ "$domain" =~ "gallery.me.com" ]]
+  then
+    # we do not want the ?derivative=...
+    grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.json" \
+      | grep -E "\.([a-zA-Z0-9]+)$" \
+      | sort | uniq \
+      > "$userdir/urls.txt"
   else
-    grep -oE "http://${domain}/[^\"]+" "$userdir/webdav-feed.json" | sort | uniq > "$userdir/urls.txt"
+    echo "  Invalid domain ${domain}."
+    exit 1
   fi
 
   # let's save the feeds in the warc file
