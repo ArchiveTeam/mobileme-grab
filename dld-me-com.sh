@@ -150,6 +150,7 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --delete-after --no-directories \
       --page-requisites "http://${domain}/$username/" \
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
