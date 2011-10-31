@@ -47,7 +47,6 @@ seconds=$(( seconds_used - (60 * minutes) ))
 
 echo "  Finished ${username} - $(date)"
 echo "  Time elapsed: ${minutes}m ${seconds}s"
-echo
 
 exit 0
 

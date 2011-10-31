@@ -8,6 +8,9 @@ The easiest way to do this is by running
 this will download and compile wget-warc and copy the executable
 to the current directory.
 
+Distributed client:
+ ./dld-client.sh ${YOURNICKNAME}
+
 All-in-one:
  ./dld-user.sh ${USERNAME}
 
