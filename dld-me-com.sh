@@ -157,7 +157,7 @@ then
       --warc-header="operator: Archive Team" \
       --warc-header="mobileme: ${domain}, ${username}"
   result=$?
-  if [ $result -ne 0 ] && [ $result -ne 8 ]
+  if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
   then
     echo " ERROR ($result)."
     exit 1
@@ -176,7 +176,7 @@ else
       --warc-header="operator: Archive Team" \
       --warc-header="mobileme: ${domain}, ${username}"
   result=$?
-  if [ $result -ne 0 ] && [ $result -ne 8 ]
+  if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
   then
     echo " ERROR ($result)."
     exit 1
