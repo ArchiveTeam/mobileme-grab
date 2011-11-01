@@ -40,7 +40,7 @@ fi
 while [ ! -f STOP ]
 do
   # request a username
-  echo -n "Next username: "
+  echo -n "Getting next username from tracker..."
   username=$( curl -s -f -d "{\"downloader\":\"${youralias}\"}" http://memac.heroku.com/request )
 
   # empty?
@@ -51,7 +51,7 @@ do
     echo
     sleep 30
   else
-    echo "'${username}'."
+    echo " done."
 
     if ./dld-user.sh "$username"
     then
@@ -86,6 +86,10 @@ do
         exit 5
       fi
       echo
+
+    else
+      echo "Error downloading '$username'."
+      exit 6
     fi
   fi
 done
