@@ -138,6 +138,60 @@ then
 
 fi
 
+# some web.me.com sites use iWeb, which doesn't always show up in the feed-XML
+
+if [[ "$domain" =~ "web.me.com" ]]
+then
+
+  # first, we crawl the site
+  echo -n "   - Discovering iWeb (directories)..."
+  $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget-discovery.log" \
+      --directory-prefix="$userdir/files/" \
+      -r -l inf --no-remove-listing \
+      --delete-after --no-directories \
+      "http://${domain}/$username/" \
+      --no-check-certificate
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
+  then
+    echo " ERROR ($result)."
+    exit 1
+  fi
+  rm -rf "$userdir/files/"
+  echo " done."
+
+  # we should download the files we've discovered
+  cut -d " " -f 3 "$userdir/wget-discovery.log" \
+    | grep URL: | cut -c 5- >> "$userdir/urls.txt"
+
+  echo -n "   - Discovering iWeb (feed.xml)..."
+  # then we look at the directories we've discovered
+  directories=$( grep -oE "http://web.me.com.+/" "$userdir/urls.txt" | sort | uniq )
+  for d in $directories
+  do
+    # download the feed.xml for this directory
+    feedxml_url="${d}feed.xml"
+
+    extra_files=$( curl "${feedxml_url}" --silent --user-agent "${USER_AGENT}" \
+                     | grep -oE 'href="[^"]+' | cut -c 7- )
+    for f in $extra_files
+    do
+      if [[ ! $f =~ http ]]
+      then
+        f="${d}${f}"
+      fi
+      echo $f >> "$userdir/urls.txt"
+    done
+
+    # add it to the final download
+    echo "$feedxml_url" >> "$userdir/urls.txt"
+  done
+
+  sort "$userdir/urls.txt" | uniq > "$userdir/unique-urls.txt"
+  mv "$userdir/unique-urls.txt" "$userdir/urls.txt"
+
+fi
+
 
 # step 2: use the url list to download the files
 
@@ -152,6 +206,32 @@ then
       -r -l inf --no-remove-listing \
       --delete-after --no-directories \
       --page-requisites "http://${domain}/$username/" \
+      --no-check-certificate \
+      --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
+      --warc-header="operator: Archive Team" \
+      --warc-header="mobileme: ${domain}, ${username}"
+  result=$?
+  if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
+  then
+    echo " ERROR ($result)."
+    exit 1
+  fi
+  rm -rf "$userdir/files/"
+  echo " done."
+
+elif [[ "$domain" =~ "web.me.com" ]]
+then
+
+  # for web.me.com we should use --mirror and --page-requisites
+
+  echo -n "   - Running wget --mirror (at least ${count} files)..."
+  $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
+      -i "$userdir/urls.txt" \
+      --directory-prefix="$userdir/files/" \
+      -r -l inf --no-remove-listing \
+      --delete-after --no-directories \
+      --page-requisites \
+      --span-hosts --domains="web.me.com,www.me.com" \
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
