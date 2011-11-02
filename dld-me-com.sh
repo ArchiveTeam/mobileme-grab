@@ -186,6 +186,7 @@ then
     # add it to the final download
     echo "$feedxml_url" >> "$userdir/urls.txt"
   done
+  echo " done."
 
   sort "$userdir/urls.txt" | uniq > "$userdir/unique-urls.txt"
   mv "$userdir/unique-urls.txt" "$userdir/urls.txt"
