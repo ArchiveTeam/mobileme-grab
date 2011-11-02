@@ -188,6 +188,16 @@ then
   done
   echo " done."
 
+  # some sites have a Sites.rss with urls
+  echo -n "   - Looking for Sites.rss..."
+  # get Sites.rss, extract urls
+  curl "http://${domain}/${username}/Sites.rss" --silent --user-agent "${USER_AGENT}" \
+    | grep -oE '<link>[^<]+' | cut -c 7- | sed "s/web.mac.com/web.me.com/" >> "$userdir/urls.txt"
+
+  # add Sites.rss to WARC
+  echo "http://${domain}/${username}/Sites.rss" >> "$userdir/urls.txt"
+  echo " done."
+
   sort "$userdir/urls.txt" | uniq > "$userdir/unique-urls.txt"
   mv "$userdir/unique-urls.txt" "$userdir/urls.txt"
 
