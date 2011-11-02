@@ -186,7 +186,7 @@ else
 fi
 
 echo -n "   - Result: "
-du -hs "$userdir/${domain}-$username"* | cut -f 1
+du --apparent-size -hs "$userdir/${domain}-$username"* | cut -f 1
 
 rm "${userdir}/.incomplete"
 
