@@ -215,6 +215,7 @@ then
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
       --page-requisites "http://${domain}/$username/" \
+      --exclude-directories="/WebObjects/FileSharing.woa/" \
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
