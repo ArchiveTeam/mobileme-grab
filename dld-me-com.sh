@@ -243,6 +243,7 @@ then
       --delete-after --no-directories \
       --page-requisites \
       --span-hosts --domains="web.me.com,www.me.com" \
+      --exclude-directories="/g/" \
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
