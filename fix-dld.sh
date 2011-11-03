@@ -37,6 +37,12 @@ then
   exit 4
 fi
 
+initial_stop_mtime='0'
+if [ -f STOP ]
+then
+  initial_stop_mtime=$( stat -c '%Y' STOP )
+fi
+
 for d in data/*/*/*/*
 do
   username=$( basename "$d" )
@@ -65,7 +71,7 @@ do
     fi
   fi
 
-  if [ -f STOP ]
+  if [ -f STOP ] && [[ $( stat -c '%Y' STOP ) -gt $initial_stop_mtime ]]
   then
     exit
   fi

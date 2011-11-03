@@ -37,7 +37,13 @@ then
   exit 4
 fi
 
-while [ ! -f STOP ]
+initial_stop_mtime='0'
+if [ -f STOP ]
+then
+  initial_stop_mtime=$( stat -c '%Y' STOP )
+fi
+
+while [ ! -f STOP ] || [[ $( stat -c '%Y' STOP ) -le $initial_stop_mtime ]]
 do
   # request a username
   echo -n "Getting next username from tracker..."
