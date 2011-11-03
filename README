@@ -11,6 +11,10 @@ to the current directory.
 Distributed client:
  ./dld-client.sh ${YOURNICKNAME}
 
+Download a single user and notify the tracker
+(you can use this to resume an interrupted download):
+ ./dld-single.sh ${YOURNICKNAME} ${USERNAME}
+
 All-in-one:
  ./dld-user.sh ${USERNAME}
 
