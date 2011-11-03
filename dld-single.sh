@@ -43,5 +43,8 @@ then
     exit 5
   fi
   echo
+else
+  echo "Error downloading '$username'."
+  exit 6
 fi
 
