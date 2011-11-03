@@ -233,6 +233,16 @@ then
 
   # for web.me.com we should use --mirror and --page-requisites
 
+  # for some reason wget does not always create the directories,
+  # so we'll do it in advance
+  cat "$userdir/urls.txt" | while read url
+  do
+    url=${url/#http:\/\//}
+    url=${url/#https:\/\//}
+    url_path="$userdir/files/"$( dirname "$url" )
+    mkdir -p "$url_path"
+  done
+
   echo -n "   - Running wget --mirror (at least ${count} files)..."
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
       -i "$userdir/urls.txt" \
