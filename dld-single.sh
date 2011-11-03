@@ -10,6 +10,20 @@
 youralias="$1"
 username="$2"
 
+if [[ ! $youralias =~ ^[-A-Za-z0-9_]+$ ]]
+then
+  echo "Usage:  $0 {nickname} {username}"
+  echo "Run with a nickname with only A-Z, a-z, 0-9, - and _"
+  exit 4
+fi
+
+if [ -z $username ]
+then
+  echo "Usage:  $0 {nickname} {username}"
+  echo "Provide a username."
+  exit 5
+fi
+
 if ./dld-user.sh "$username"
 then
   # complete
