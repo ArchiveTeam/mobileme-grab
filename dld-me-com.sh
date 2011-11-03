@@ -148,7 +148,6 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget-discovery.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
-      --delete-after --no-directories \
       "http://${domain}/$username/" \
       --no-check-certificate
   result=$?
@@ -215,7 +214,6 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
-      --delete-after --no-directories \
       --page-requisites "http://${domain}/$username/" \
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
@@ -240,7 +238,6 @@ then
       -i "$userdir/urls.txt" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
-      --delete-after --no-directories \
       --page-requisites \
       --span-hosts --domains="web.me.com,www.me.com" \
       --exclude-directories="/g/" \
