@@ -50,7 +50,13 @@ then
   done
   bytes_str="${bytes_str}}"
 
-  success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\"}"
+  # some more statistics
+  ids=($( grep -h -oE "<id>urn:apple:iserv:[^<]+" \
+            "data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
+            | cut -c 21- | sort | uniq ))
+  id="${#ids[*]}:${ids[0]}:${ids[${#ids[*]}-1]}"
+
+  success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\",\"id\":\"${id}\"}"
   echo "Telling tracker that '${username}' is done."
   resp=$( curl -s -f -d "$success_str" http://memac.heroku.com/done )
   if [[ "$resp" != "OK" ]]
