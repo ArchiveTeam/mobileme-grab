@@ -240,6 +240,8 @@ then
   do
     url=${url/#http:\/\//}
     url=${url/#https:\/\//}
+    url=$( echo "$url" | sed 's/+/ /g; s/%/\\x/g' )
+    url=$( echo -e "$url" )
     url_path="$userdir/files/"$( dirname "$url" )
     mkdir -p "$url_path"
   done
