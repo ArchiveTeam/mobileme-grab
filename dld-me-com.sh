@@ -197,8 +197,18 @@ then
   echo "http://${domain}/${username}/Sites.rss" >> "$userdir/urls.txt"
   echo " done."
 
-  sort "$userdir/urls.txt" | uniq > "$userdir/unique-urls.txt"
+  # sometimes Sites.rss or the feeds include links to external domains,
+  # the user's web site. these domains don't always exist.
+  #
+  # to prevent wget from returning a dns error and since the content
+  # on web.me.com is the same as that on the external domain we
+  # only include the urls from web.me.com
+  cat "$userdir/urls.txt" \
+    | grep -E "^http://web.me.com/" \
+    | sort | uniq > "$userdir/unique-urls.txt"
   mv "$userdir/unique-urls.txt" "$userdir/urls.txt"
+
+  count=$( cat "$userdir/urls.txt" | wc -l )
 
 fi
 
