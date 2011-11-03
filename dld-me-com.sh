@@ -8,6 +8,8 @@
 #                         homepage.mac.com
 #
 
+VERSION="20111103.01"
+
 # this script needs wget-warc, which you can find on the ArchiveTeam wiki.
 # set the WGET_WARC environment variable to point to the wget-warc executable.
 

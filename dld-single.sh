@@ -24,6 +24,8 @@ then
   exit 5
 fi
 
+VERSION=$( grep 'VERSION=' dld-me-com.sh | grep -oE "[-0-9.]+" )
+
 if ./dld-user.sh "$username"
 then
   # complete
@@ -48,7 +50,7 @@ then
   done
   bytes_str="${bytes_str}}"
 
-  success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str}}"
+  success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\"}"
   echo "Telling tracker that '${username}' is done."
   resp=$( curl -s -f -d "$success_str" http://memac.heroku.com/done )
   if [[ "$resp" != "OK" ]]
