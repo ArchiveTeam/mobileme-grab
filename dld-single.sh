@@ -54,7 +54,11 @@ then
   ids=($( grep -h -oE "<id>urn:apple:iserv:[^<]+" \
             "data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
             | cut -c 21- | sort | uniq ))
-  id="${#ids[*]}:${ids[0]}:${ids[${#ids[*]}-1]}"
+  id=0
+  if [[ ${#ids[*]} -gt 0 ]]
+  then
+    id="${#ids[*]}:${ids[0]}:${ids[${#ids[*]}-1]}"
+  fi
 
   success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\",\"id\":\"${id}\"}"
   echo "Telling tracker that '${username}' is done."
