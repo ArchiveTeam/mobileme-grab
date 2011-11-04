@@ -300,7 +300,12 @@ else
 fi
 
 echo -n "   - Result: "
-du --apparent-size -hs "$userdir/${domain}-$username"* | cut -f 1
+if du --help | grep -q apparent-size
+then
+  du --apparent-size -hs "$userdir/${domain}-$username"* | cut -f 1
+else
+  du -hs "$userdir/${domain}-$username"* | cut -f 1
+fi
 
 rm "${userdir}/.incomplete"
 

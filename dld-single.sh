@@ -39,7 +39,12 @@ then
     userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
     if [ -d $userdir ]
     then
-      bytes=$( du --apparent-size -bs $userdir | cut -f 1 )
+      if du --help | grep -q apparent-size
+      then
+        bytes=$( du --apparent-size -bs $userdir | cut -f 1 )
+      else
+        bytes=$( du -bs $userdir | cut -f 1 )
+      fi
       if [[ $i -ne 0 ]]
       then
         bytes_str="${bytes_str},"
