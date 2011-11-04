@@ -5,7 +5,7 @@
 
 rm -rf wget-warc-20111101.tar.bz2 wget-1.13.4-2567-dirty/
 
-wget https://github.com/downloads/alard/wget-warc/wget-warc-20111101.tar.bz2
+wget --no-check-certificate https://github.com/downloads/alard/wget-warc/wget-warc-20111101.tar.bz2
 tar xjf wget-warc-20111101.tar.bz2
 cd wget-1.13.4-2567-dirty/
 if ./configure && make
