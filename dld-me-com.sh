@@ -205,10 +205,12 @@ then
   # to prevent wget from returning a dns error and since the content
   # on web.me.com is the same as that on the external domain we
   # only include the urls from web.me.com
+  echo -n "   - Sorting url list..."
   cat "$userdir/urls.txt" \
     | grep -E "^http://web.me.com/" \
     | sort | uniq > "$userdir/unique-urls.txt"
   mv "$userdir/unique-urls.txt" "$userdir/urls.txt"
+  echo " done."
 
   count=$( cat "$userdir/urls.txt" | wc -l )
 
@@ -248,6 +250,7 @@ then
 
   # for some reason wget does not always create the directories,
   # so we'll do it in advance
+  echo -n "   - Preparing directory structure..."
   cat "$userdir/urls.txt" | while read url
   do
     url=${url/#http:\/\//}
@@ -255,8 +258,9 @@ then
     url=$( echo "$url" | sed 's/+/ /g; s/%/\\x/g' )
     url=$( echo -e "$url" )
     url_path="$userdir/files/"$( dirname "$url" )
-    mkdir -p "$url_path"
+    [ ! -d "$url_path" ] && mkdir -p "$url_path"
   done
+  echo " done."
 
   echo -n "   - Running wget --mirror (at least ${count} files)..."
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
