@@ -20,7 +20,7 @@ fi
 
 rm -rf wget-1.13.4-2574.tar.bz2 wget-1.13.4-2574/
 
-wget --no-check-certificate https://github.com/downloads/alard/wget-warc/wget-1.13.4-2574.tar.bz2
+wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/wget-1.13.4-2574.tar.bz2
 tar xjf wget-1.13.4-2574.tar.bz2
 cd wget-1.13.4-2574/
 if ./configure $CONFIGURE_SSL_OPT && make
