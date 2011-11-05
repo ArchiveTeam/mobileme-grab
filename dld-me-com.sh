@@ -8,7 +8,7 @@
 #                         homepage.mac.com
 #
 
-VERSION="20111103.02"
+VERSION="20111105.01"
 
 # this script needs wget-warc, which you can find on the ArchiveTeam wiki.
 # set the WGET_WARC environment variable to point to the wget-warc executable.
@@ -233,6 +233,7 @@ then
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
+      --warc-header="mobileme-dld-script-version: ${VERSION}" \
       --warc-header="mobileme: ${domain}, ${username}"
   result=$?
   if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
@@ -273,6 +274,7 @@ then
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
+      --warc-header="mobileme-dld-script-version: ${VERSION}" \
       --warc-header="mobileme: ${domain}, ${username}"
   result=$?
   if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
@@ -292,6 +294,7 @@ else
       --no-check-certificate \
       --warc-file="$userdir/${domain}-$username" --warc-max-size=inf \
       --warc-header="operator: Archive Team" \
+      --warc-header="mobileme-dld-script-version: ${VERSION}" \
       --warc-header="mobileme: ${domain}, ${username}"
   result=$?
   if [ $result -ne 0 ] && [ $result -ne 6 ] && [ $result -ne 8 ]
