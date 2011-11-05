@@ -48,7 +48,7 @@ do
   username=$( basename "$d" )
   need_fix=0
 
-  if [[ -f "${d}/*/.incomplete" ]]
+  if [ -f "${d}/"*"/.incomplete" ]
   then
     echo "${username} is still incomplete, not fixing."
     continue
