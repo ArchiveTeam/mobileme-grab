@@ -18,11 +18,11 @@ then
   fi
 fi
 
-rm -rf wget-warc-20111101.tar.bz2 wget-1.13.4-2567-dirty/
+rm -rf wget-1.13.4-2574.tar.bz2 wget-1.13.4-2574/
 
-wget --no-check-certificate https://github.com/downloads/alard/wget-warc/wget-warc-20111101.tar.bz2
-tar xjf wget-warc-20111101.tar.bz2
-cd wget-1.13.4-2567-dirty/
+wget --no-check-certificate https://github.com/downloads/alard/wget-warc/wget-1.13.4-2574.tar.bz2
+tar xjf wget-1.13.4-2574.tar.bz2
+cd wget-1.13.4-2574/
 if ./configure $CONFIGURE_SSL_OPT && make
 then
   cp src/wget ../wget-warc
@@ -34,7 +34,7 @@ then
   echo "wget-warc successfully built."
   echo
   ./wget-warc --help | grep -iE "gnu|warc"
-  rm -rf wget-warc-20111101.tar.bz2 wget-1.13.4-2567-dirty/
+  rm -rf wget-1.13.4-2574.tar.bz2 wget-1.13.4-2574/
 else
   echo
   echo "wget-warc not successfully built."
