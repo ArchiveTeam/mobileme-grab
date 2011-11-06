@@ -150,6 +150,7 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget-discovery.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --trust-server-names \
       "http://${domain}/$username/" \
       --no-check-certificate
   result=$?
@@ -228,6 +229,7 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --trust-server-names \
       --page-requisites "http://${domain}/$username/" \
       --exclude-directories="/WebObjects/FileSharing.woa/" \
       --no-check-certificate \
@@ -268,6 +270,7 @@ then
       -i "$userdir/urls.txt" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --trust-server-names \
       --page-requisites \
       --span-hosts --domains="web.me.com,www.me.com" \
       --exclude-directories="/g/" \
