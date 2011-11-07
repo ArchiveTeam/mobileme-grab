@@ -8,7 +8,7 @@
 #                         homepage.mac.com
 #
 
-VERSION="20111106.01"
+VERSION="20111107.01"
 
 # this script needs wget-warc, which you can find on the ArchiveTeam wiki.
 # set the WGET_WARC environment variable to point to the wget-warc executable.
@@ -119,7 +119,7 @@ then
   # for gallery.me.com we use the json feed, which lists the images
   if [[ "$domain" =~ "web.me.com" ]]
   then
-    grep -oE "http://${domain}/[^\"<]+" "$userdir/webdav-feed.xml" | sort | uniq > "$userdir/urls.txt"
+    grep "href=\"" "$userdir/webdav-feed.xml" | grep -oE "http://${domain}/[^\"<]+" | sort | uniq > "$userdir/urls.txt"
   elif [[ "$domain" =~ "gallery.me.com" ]]
   then
     # we do not want the ?derivative=...
