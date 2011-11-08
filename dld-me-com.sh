@@ -29,6 +29,20 @@ then
   exit 3
 fi
 
+# the script also needs curl with SSL support
+
+if ! builtin type -p curl &>/dev/null
+then
+  echo "You don't have curl."
+  exit 3
+fi
+
+if ! curl -V | grep -q SSL
+then
+  echo "Your version of curl doesn't have SSL support."
+  exit 3
+fi
+
 USER_AGENT="Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27"
 
 domain="$1"

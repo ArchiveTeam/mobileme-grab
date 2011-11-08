@@ -28,6 +28,20 @@ then
   exit 3
 fi
 
+# the script also needs curl with SSL support
+
+if ! builtin type -p curl &>/dev/null
+then
+  echo "You don't have curl."
+  exit 3
+fi
+
+if ! curl -V | grep -q SSL
+then
+  echo "Your version of curl doesn't have SSL support."
+  exit 3
+fi
+
 youralias="$1"
 
 if [[ ! $youralias =~ ^[-A-Za-z0-9_]+$ ]]
