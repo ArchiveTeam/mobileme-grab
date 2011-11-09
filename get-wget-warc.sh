@@ -18,11 +18,14 @@ then
   fi
 fi
 
-rm -rf wget-1.13.4-2574.tar.bz2 wget-1.13.4-2574/
+TARFILE=wget-1.13.4-2574-zlib124-plusfix.tar.bz2
+TARDIR=wget-1.13.4-2574-dirty
 
-wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/wget-1.13.4-2574.tar.bz2
-tar xjf wget-1.13.4-2574.tar.bz2
-cd wget-1.13.4-2574/
+rm -rf $TARFILE $TARDIR/
+
+wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/$TARFILE
+tar xjf $TARFILE
+cd $TARDIR/
 if ./configure $CONFIGURE_SSL_OPT && make
 then
   cp src/wget ../wget-warc
@@ -34,7 +37,7 @@ then
   echo "wget-warc successfully built."
   echo
   ./wget-warc --help | grep -iE "gnu|warc"
-  rm -rf wget-1.13.4-2574.tar.bz2 wget-1.13.4-2574/
+  rm -rf $TARFILE $TARDIR/
 else
   echo
   echo "wget-warc not successfully built."
