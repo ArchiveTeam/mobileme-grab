@@ -34,7 +34,7 @@ if [[ -z $threshold ]]; then
 fi
 
 while true; do
-	available=`$DF -BG data | tail -n 1 | awk '{print $4}' | sed -e 's/[^0-9]//g'`
+	available=`$DF | tail -n 1 | awk '{print $4}' | sed -e 's/[^0-9]//g'`
 
 	echo "[`date`] data filesystem: $available GiB free, will touch STOP when $threshold GiB are free" 
 
