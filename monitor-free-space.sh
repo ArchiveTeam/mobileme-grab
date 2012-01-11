@@ -11,10 +11,11 @@
 # It is assumed that this script will be run from the same directory as
 # dld-client.sh.  If it isn't, then nothing will work as advertised.
 #
-# Because this script gracefully stops downloads, the amount of free space left on your 
-# by the data directory will almost always exceed the configured threshold.  If
-# you are tight on disk space, then, you should give yourself a margin of a
-# couple gigabytes.  Adjust as your risk-taking sense dictates.
+# Because this script gracefully stops downloads, the amount of free space left
+# on the filesystem containing the data directory will almost always be less
+# than the configured threshold.  If you are tight on disk space, then, you
+# should give yourself a margin of a couple gigabytes.  Adjust as your
+# risk-taking sense dictates.
 
 threshold="$1"
 triggered=0
