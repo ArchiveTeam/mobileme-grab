@@ -53,6 +53,7 @@ do
     user=$( basename $user_dir )
     echo "Uploading $user"
 
+    echo "${user_dir}" | \
     rsync -avz --partial \
           --compress-level=9 \
           --progress \
@@ -61,7 +62,8 @@ do
           --exclude="files" \
           --exclude="unique-urls.txt" \
           --recursive \
-          ${user_dir} ${dest}${user_dir}
+          --files-from="-" \
+          ./ ${dest}
     if [ $? -eq 0 ]
     then
       echo -n "Upload complete. Notifying tracker... "
