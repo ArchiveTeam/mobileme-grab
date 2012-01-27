@@ -66,7 +66,7 @@ do
     then
       echo -n "Upload complete. Notifying tracker... "
 
-      success_str="{\"uploader\":\"${destname}\",\"user\":\"${username}\"}"
+      success_str="{\"uploader\":\"${destname}\",\"user\":\"${user}\"}"
       tracker_no=$(( RANDOM % 3 ))
       tracker_host="memac-${tracker_no}.heroku.com"
       resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )
