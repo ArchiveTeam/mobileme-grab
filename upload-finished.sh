@@ -61,7 +61,6 @@ do
           --exclude="files" \
           --exclude="unique-urls.txt" \
           --recursive \
-          --dry-run \
           ${user_dir} ${dest}${user_dir}
     if [ $? -eq 0 ]
     then
