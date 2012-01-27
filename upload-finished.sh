@@ -4,23 +4,24 @@
 #
 # This script will look in your data/ directory to find
 # users that are finished. It will upload the data for
-# these users to the $DEST folder using rsync.
-#
-# Suggested $DEST format:
-#   ${SERVER}::${MODULENAME}/mobileme/
+# these users to the repository using rsync.
 #
 # You can run this while you're still downloading,
 # since it will only upload data that is done.
+# After the upload of an account finishes, the files are
+# moved to the data/uploaded/ directory.
 #
 # Usage:
 #   ./upload-finished.sh $DEST
-# (ask SketchCow for a module name)
+# ask SketchCow for your destination name
+# note: this is *not* a full rsync url, just the module name
 #
 # You can set a bwlimit for rsync, e.g.:
 #   ./upload-finished.sh $DEST 300
 #
 
-dest=$1
+destname=$1
+dest=batcave.textfiles.com::$1/mobileme/
 if [ -z "$dest" ]
 then
   echo "Usage:  $0 [dest] [bwlimit]"
@@ -40,7 +41,7 @@ then
 fi
 
 cd data/
-for d in */*/*/*
+for d in ?/*/*/*
 do
   if [ -d "${d}/web.me.com" ] && \
      [ -d "${d}/homepage.mac.com" ] && \
@@ -48,16 +49,34 @@ do
      [ -d "${d}/gallery.me.com" ] && \
      [ ! -f "${d}/"*"/.incomplete" ]
   then
-    echo "${d}/"
+    user_dir="${d}/"
+    user=$( basename $user_dir )
+    echo "Uploading $user"
+
+    rsync -avz --partial \
+          --compress-level=9 \
+          --progress \
+          ${bwlimit} \
+          --exclude=".incomplete" \
+          --exclude="files" \
+          --exclude="unique-urls.txt" \
+          --recursive \
+          --dry-run \
+          ${user_dir} ${dest}${user_dir}
+    if [ $? -eq 0 ]
+    then
+      echo -n "Upload complete. Notifying tracker... "
+
+      success_str="{\"uploader\":\"${destname}\",\"user\":\"${username}\"}"
+      tracker_no=$(( RANDOM % 3 ))
+      tracker_host="memac-${tracker_no}.heroku.com"
+      resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )
+      
+      mkdir -p "uploaded/"$( dirname $user_dir )
+      mv $user_dir "uploaded/"$user_dir
+
+      echo "done."
+    fi
   fi
-done | rsync \
-      -avz --partial \
-      --progress \
-      ${bwlimit} \
-      --exclude=".incomplete" \
-      --exclude="files" \
-      --exclude="unique-urls.txt" \
-      --files-from="-" \
-      --recursive \
-      ./ ${dest}
+done
 
