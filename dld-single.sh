@@ -69,7 +69,7 @@ then
   echo "Telling tracker that '${username}' is done."
   tracker_no=$(( RANDOM % 3 ))
   tracker_host="memac-${tracker_no}.heroku.com"
-  resp=$( curl -s -f -d "$success_str" http://${tracker_no}/done )
+  resp=$( curl -s -f -d "$success_str" http://${tracker_host}/done )
   if [[ "$resp" != "OK" ]]
   then
     echo "ERROR contacting tracker. Could not mark '$username' done."
