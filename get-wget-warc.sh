@@ -18,15 +18,15 @@ then
   fi
 fi
 
-TARFILE=wget-1.13.4-2574-zlib124-plusfix.tar.bz2
-TARDIR=wget-1.13.4-2574-dirty
+TARFILE=wget-1.13.4-2581.tar.bz2
+TARDIR=wget-1.13.4-2581
 
 rm -rf $TARFILE $TARDIR/
 
 wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/$TARFILE
 tar xjf $TARFILE
 cd $TARDIR/
-if ./configure $CONFIGURE_SSL_OPT && make
+if ./configure $CONFIGURE_SSL_OPT --disable-nls && make
 then
   cp src/wget ../wget-warc
   cd ../
