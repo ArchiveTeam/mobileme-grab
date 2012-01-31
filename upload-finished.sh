@@ -77,7 +77,12 @@ do
       mv $user_dir "uploaded/"$user_dir
 
       echo "done."
+    else
+      echo "An rsync error. Scary!"
+      exit 1
     fi
   fi
 done
+
+exit 0
 
