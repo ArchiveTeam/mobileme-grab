@@ -25,7 +25,7 @@ then
   echo "Usage:  $0 [yournick] [bwlimit]"
   exit
 fi
-if [[ ! $destname =~ ^[a-zA-Z0-9]+$ ]]
+if [[ ! $destname =~ ^[-A-Za-z0-9_]+$ ]]
 then
   echo "$dest does not look like a proper nickname."
   echo "Usage:  $0 [yournick] [bwlimit]"
