@@ -12,25 +12,23 @@
 # moved to the data/uploaded/ directory.
 #
 # Usage:
-#   ./upload-finished.sh $DEST
-# ask SketchCow for your destination name
-# note: this is *not* a full rsync url, just the module name
+#   ./upload-finished.sh $YOURNICK
 #
 # You can set a bwlimit for rsync, e.g.:
-#   ./upload-finished.sh $DEST 300
+#   ./upload-finished.sh $YOURNICK 300
 #
 
 destname=$1
 dest=batcave.textfiles.com::$1/mobileme/
-if [ -z "$dest" ]
+if [ -z "$destname" ]
 then
-  echo "Usage:  $0 [dest] [bwlimit]"
+  echo "Usage:  $0 [yournick] [bwlimit]"
   exit
 fi
-if [[ ! $dest =~ ^[.a-zA-Z0-9]+::[a-zA-Z0-9]+/mobileme/$ ]]
+if [[ ! $destname =~ ^[a-zA-Z0-9]+$ ]]
 then
-  echo "$dest does not look like a proper rsync destination."
-  echo "Usage:  $0 [dest] [bwlimit]"
+  echo "$dest does not look like a proper nickname."
+  echo "Usage:  $0 [yournick] [bwlimit]"
   exit
 fi
 
