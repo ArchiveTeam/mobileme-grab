@@ -19,7 +19,7 @@
 #
 
 destname=$1
-dest=batcave.textfiles.com::$1/mobileme/
+dest=batcave.textfiles.com::mobileme/$1/
 if [ -z "$destname" ]
 then
   echo "Usage:  $0 [yournick] [bwlimit]"
