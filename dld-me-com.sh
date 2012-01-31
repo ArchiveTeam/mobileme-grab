@@ -93,7 +93,7 @@ then
   echo " done."
 
   # grep for href, strip <D:href> and prepend https://public.me.com
-  grep -o -E "<D:href>[^<]+" "$userdir/webdav-feed.xml" | cut -c 9- | awk '/[^\/]$/ { print "https://public.me.com" $1 }' > "$userdir/urls.txt"
+  grep -o -E "<D:href>[^<]+" "$userdir/webdav-feed.xml" | cut -c 9- | awk '/[^\/]$/ { print "https://public.me.com" $1 }' | sort | uniq > "$userdir/urls.txt"
   count=$( cat "$userdir/urls.txt" | wc -l )
 
 elif [[ ! "$domain" =~ "homepage.mac.com" ]]
