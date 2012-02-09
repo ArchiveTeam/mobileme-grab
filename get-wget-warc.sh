@@ -18,8 +18,8 @@ then
   fi
 fi
 
-TARFILE=wget-1.13.4-2581.tar.bz2
-TARDIR=wget-1.13.4-2581
+TARFILE=wget-1.13.4-2582.tar.bz2
+TARDIR=wget-1.13.4-2582
 
 rm -rf $TARFILE $TARDIR/
 
