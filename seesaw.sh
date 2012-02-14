@@ -88,7 +88,8 @@ do
     fi
 
     userdir="${username:0:1}/${username:0:2}/${username:0:3}/${username}"
-    dest=batcave.textfiles.com::mobileme/$youralias/
+    target=fos
+    dest=${target}.textfiles.com::mobileme/$1/
     echo "Uploading $user"
 
     echo "${userdir}" | \
@@ -107,7 +108,7 @@ do
     then
       echo -n "Upload complete. Notifying tracker... "
 
-      success_str="{\"uploader\":\"${youralias}\",\"user\":\"${username}\"}"
+      success_str="{\"uploader\":\"${youralias}\",\"user\":\"${username}\",\"server\":\"${target}\"}"
       tracker_no=$(( RANDOM % 3 ))
       tracker_host="memac-${tracker_no}.heroku.com"
       resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )

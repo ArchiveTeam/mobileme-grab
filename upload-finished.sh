@@ -19,7 +19,8 @@
 #
 
 destname=$1
-dest=batcave.textfiles.com::mobileme/$1/
+target=fos
+dest=${target}.textfiles.com::mobileme/$1/
 if [ -z "$destname" ]
 then
   echo "Usage:  $0 [yournick] [bwlimit]"
@@ -66,7 +67,7 @@ do
     then
       echo -n "Upload complete. Notifying tracker... "
 
-      success_str="{\"uploader\":\"${destname}\",\"user\":\"${user}\"}"
+      success_str="{\"uploader\":\"${destname}\",\"user\":\"${user}\",\"server\":\"${target}\"}"
       tracker_no=$(( RANDOM % 3 ))
       tracker_host="memac-${tracker_no}.heroku.com"
       resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )
