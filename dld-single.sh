@@ -66,15 +66,24 @@ then
   fi
 
   success_str="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\",\"id\":\"${id}\"}"
-  echo "Telling tracker that '${username}' is done."
-  tracker_no=$(( RANDOM % 3 ))
-  tracker_host="memac-${tracker_no}.heroku.com"
-  resp=$( curl -s -f -d "$success_str" http://${tracker_host}/done )
-  if [[ "$resp" != "OK" ]]
-  then
-    echo "ERROR contacting tracker. Could not mark '$username' done."
-    exit 5
-  fi
+
+  delay=1
+  while [ $delay -gt 0 ]
+  do
+    echo "Telling tracker that '${username}' is done."
+    tracker_no=$(( RANDOM % 3 ))
+    tracker_host="memac-${tracker_no}.heroku.com"
+    resp=$( curl -s -f -d "$success_str" http://${tracker_host}/done )
+    if [[ "$resp" != "OK" ]]
+    then
+      echo "ERROR contacting tracker. Could not mark '$username' done."
+      echo "Sleep and retry."
+      sleep $delay
+      delay=$(( delay * 2 ))
+    else
+      delay=0
+    fi
+  done
   echo
 else
   echo "Error downloading '$username'."

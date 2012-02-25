@@ -109,9 +109,23 @@ do
       echo -n "Upload complete. Notifying tracker... "
 
       success_str="{\"uploader\":\"${youralias}\",\"user\":\"${username}\",\"server\":\"${target}\"}"
-      tracker_no=$(( RANDOM % 3 ))
-      tracker_host="memac-${tracker_no}.heroku.com"
-      resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )
+
+      delay=1
+      while [ $delay -gt 0 ]
+      do
+        tracker_no=$(( RANDOM % 3 ))
+        tracker_host="memac-${tracker_no}.heroku.com"
+        resp=$( curl -s -f -d "$success_str" http://${tracker_host}/uploaded )
+        if [[ "$resp" != "OK" ]]
+        then
+          echo "ERROR contacting tracker. Could not mark '$username' done."
+          echo "Sleep and retry."
+          sleep $delay
+          delay=$(( delay * 2 ))
+        else
+          delay=0
+        fi
+      done
       
       rm -rf data/$userdir
 
