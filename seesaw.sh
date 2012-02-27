@@ -63,6 +63,8 @@ then
   initial_stop_mtime=$( stat -c '%Y' STOP )
 fi
 
+VERSION=$( grep 'VERSION=' dld-me-com.sh | grep -oE "[-0-9.]+" )
+
 while [ ! -f STOP ] || [[ $( stat -c '%Y' STOP ) -le $initial_stop_mtime ]]
 do
   # request a username
@@ -81,11 +83,48 @@ do
   else
     echo " done."
 
-    if ! ./dld-single.sh "$youralias" "$username"
+    if ! ./dld-user.sh "$username"
     then
       echo "Error downloading '$username'."
       exit 6
     fi
+
+    # statistics!
+    i=0
+    bytes_str="{"
+    domains="web.me.com public.me.com gallery.me.com homepage.mac.com"
+    for domain in $domains
+    do
+      userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
+      if [ -d $userdir ]
+      then
+        if du --help | grep -q apparent-size
+        then
+          bytes=$( du --apparent-size -bs $userdir | cut -f 1 )
+        else
+          bytes=$( du -bs $userdir | cut -f 1 )
+        fi
+        if [[ $i -ne 0 ]]
+        then
+          bytes_str="${bytes_str},"
+        fi
+        bytes_str="${bytes_str}\"${domain}\":${bytes}"
+        i=$(( i + 1 ))
+      fi
+    done
+    bytes_str="${bytes_str}}"
+
+    # some more statistics
+    ids=($( grep -h -oE "<id>urn:apple:iserv:[^<]+" \
+              "data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
+              | cut -c 21- | sort | uniq ))
+    id=0
+    if [[ ${#ids[*]} -gt 0 ]]
+    then
+      id="${#ids[*]}:${ids[0]}:${ids[${#ids[*]}-1]}"
+    fi
+
+    success_str_done="{\"downloader\":\"${youralias}\",\"user\":\"${username}\",\"bytes\":${bytes_str},\"version\":\"${VERSION}\",\"id\":\"${id}\"}"
 
     userdir="${username:0:1}/${username:0:2}/${username:0:3}/${username}"
     target=fos
@@ -139,6 +178,25 @@ do
       echo
       exit 1
     fi
+
+    delay=1
+    while [ $delay -gt 0 ]
+    do
+      echo "Telling tracker that '${username}' is done."
+      tracker_no=$(( RANDOM % 3 ))
+      tracker_host="memac-${tracker_no}.heroku.com"
+      resp=$( curl -s -f -d "$success_str_done" http://${tracker_host}/done )
+      if [[ "$resp" != "OK" ]]
+      then
+        echo "ERROR contacting tracker. Could not mark '$username' done."
+        echo "Sleep and retry."
+        sleep $delay
+        delay=$(( delay * 2 ))
+      else
+        delay=0
+      fi
+    done
+    echo
   fi
 done
 
