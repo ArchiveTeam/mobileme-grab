@@ -268,15 +268,16 @@ then
   # for some reason wget does not always create the directories,
   # so we'll do it in advance
   echo -n "   - Preparing directory structure..."
-  cat "$userdir/urls.txt" | while read url
-  do
-    url=${url/#http:\/\//}
-    url=${url/#https:\/\//}
-    url=$( echo "$url" | sed 's/+/ /g; s/%/\\x/g' )
-    url=$( echo -e "$url" )
-    url_path="$userdir/files/"$( dirname "$url" )
-    [ ! -d "$url_path" ] && mkdir -p "$url_path"
-  done
+  mkdir -p $userdir/files
+
+  perl -M'File::Basename' -n -e '
+        chomp;
+        s,^https?://,,;
+        s/\+/ /g;
+        s/%(..)/chr(hex($1))/eg;
+        print dirname($_), "\0"' $userdir/urls.txt \
+    | (cd $userdir/files && xargs -0 mkdir -p)
+
   echo " done."
 
   echo -n "   - Running wget --mirror (at least ${count} files)..."
