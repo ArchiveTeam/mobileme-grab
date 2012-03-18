@@ -192,7 +192,7 @@ then
                      | grep -oE 'href="[^"]+' | cut -c 7- )
     for f in $extra_files
     do
-      if [[ ! $f =~ http ]]
+      if [[ ! $f =~ ^http ]]
       then
         f="${d}${f}"
       fi
