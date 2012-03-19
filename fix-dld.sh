@@ -40,7 +40,7 @@ fi
 initial_stop_mtime='0'
 if [ -f STOP ]
 then
-  initial_stop_mtime=$( stat -c '%Y' STOP )
+  initial_stop_mtime=$( ./filemtime-helper.sh STOP )
 fi
 
 for d in data/*/*/*/*
@@ -71,7 +71,7 @@ do
     fi
   fi
 
-  if [ -f STOP ] && [[ $( stat -c '%Y' STOP ) -gt $initial_stop_mtime ]]
+  if [ -f STOP ] && [[ $( ./filemtime-helper.sh STOP ) -gt $initial_stop_mtime ]]
   then
     exit
   fi

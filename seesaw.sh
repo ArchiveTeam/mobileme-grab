@@ -60,12 +60,12 @@ fi
 initial_stop_mtime='0'
 if [ -f STOP ]
 then
-  initial_stop_mtime=$( stat -c '%Y' STOP )
+  initial_stop_mtime=$( ./filemtime-helper.sh STOP )
 fi
 
 VERSION=$( grep 'VERSION=' dld-me-com.sh | grep -oE "[-0-9.]+" )
 
-while [ ! -f STOP ] || [[ $( stat -c '%Y' STOP ) -le $initial_stop_mtime ]]
+while [ ! -f STOP ] || [[ $( ./filemtime-helper.sh STOP ) -le $initial_stop_mtime ]]
 do
   # request a username
   echo -n "Getting next username from tracker..."
