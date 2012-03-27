@@ -14,7 +14,7 @@
 # Because this script gracefully stops downloads, the amount of free space left
 # on the filesystem containing the data directory will almost always be less
 # than the configured threshold.  If you are tight on disk space, then, you
-# should give yourself a margin of a couple gigabytes.  Adjust as your
+# should give yourself a margin of a couple gibibytes.  Adjust as your
 # risk-taking sense dictates.
 
 threshold="$1"
@@ -30,7 +30,7 @@ triggered=0
 DF='gdf -BG data'
 
 if [[ -z $threshold ]]; then
-	echo "Usage: $0 {free space threshold in gigabytes}"
+	echo "Usage: $0 {free space threshold in gibibytes}"
 	exit 1
 fi
 
