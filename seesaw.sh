@@ -131,18 +131,29 @@ do
     dest=${target}.textfiles.com::mobileme/$1/
     echo "Uploading $user"
 
-    echo "${userdir}" | \
-    rsync -avz --partial \
-          --compress-level=9 \
-          --progress \
-          ${bwlimit} \
-          --exclude=".incomplete" \
-          --exclude="files" \
-          --exclude="unique-urls.txt" \
-          --recursive \
-          --files-from="-" \
-          data/ ${dest}
-    result=$?
+    result=-1
+    while [ $result -ne 0 ]
+    do
+      echo "${userdir}" | \
+      rsync -avz --partial \
+            --compress-level=9 \
+            --progress \
+            ${bwlimit} \
+            --exclude=".incomplete" \
+            --exclude="files" \
+            --exclude="unique-urls.txt" \
+            --recursive \
+            --files-from="-" \
+            data/ ${dest}
+      result=$?
+
+      if [ $result -ne 0 ]
+      then
+        echo "An rsync error. Waiting 10 seconds before trying again..."
+        sleep 10
+      fi
+    done
+
     if [ $result -eq 0 ]
     then
       echo -n "Upload complete. Notifying tracker... "
