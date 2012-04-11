@@ -43,7 +43,12 @@ then
   initial_stop_mtime=$( ./filemtime-helper.sh STOP )
 fi
 
-for d in data/*/*/*/*
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
+for d in $DATA_DIR/*/*/*/*
 do
   username=$( basename "$d" )
   need_fix=0

@@ -20,6 +20,11 @@
 threshold="$1"
 triggered=0
 
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
 # If df on your system isn't GNU df, you'll need to fix this up.  More-or-less
 # equivalent configuration for a BSD userland:
 #
@@ -27,7 +32,7 @@ triggered=0
 #
 # It isn't a perfect correspondence -- BSD df lists 1G-blocks starting from
 # zero, not one -- but it's good enough.
-DF='gdf -BG data'
+DF="gdf -BG $DATA_DIR"
 
 if [[ -z $threshold ]]; then
 	echo "Usage: $0 {free space threshold in gibibytes}"

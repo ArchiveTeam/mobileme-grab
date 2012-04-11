@@ -45,9 +45,14 @@ fi
 
 USER_AGENT="Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27"
 
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
 domain="$1"
 username="$2"
-userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
+userdir="$DATA_DIR/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
 
 if [[ -f "${userdir}/.incomplete" ]]
 then

@@ -39,7 +39,12 @@ then
   bwlimit="--bwlimit=${bwlimit}"
 fi
 
-cd data/
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
+cd $DATA_DIR/
 for d in ?/*/*/*
 do
   if [ -d "${d}/web.me.com" ] && \

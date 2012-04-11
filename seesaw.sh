@@ -42,6 +42,11 @@ then
   exit 3
 fi
 
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
 youralias="$1"
 bwlimit=$2
 
@@ -95,7 +100,7 @@ do
     domains="web.me.com public.me.com gallery.me.com homepage.mac.com"
     for domain in $domains
     do
-      userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
+      userdir="$DATA_DIR/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
       if [ -d $userdir ]
       then
         if du --help | grep -q apparent-size
@@ -116,7 +121,7 @@ do
 
     # some more statistics
     ids=($( grep -h -oE "<id>urn:apple:iserv:[^<]+" \
-              "data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
+              "$DATA_DIR/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
               | cut -c 21- | sort | uniq ))
     id=0
     if [[ ${#ids[*]} -gt 0 ]]
@@ -144,7 +149,7 @@ do
             --exclude="unique-urls.txt" \
             --recursive \
             --files-from="-" \
-            data/ ${dest}
+            $DATA_DIR/ ${dest}
       result=$?
 
       if [ $result -ne 0 ]
@@ -177,7 +182,7 @@ do
         fi
       done
       
-      rm -rf data/$userdir
+      rm -rf $DATA_DIR/$userdir
 
       echo "done."
       echo

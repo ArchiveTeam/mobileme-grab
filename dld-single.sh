@@ -26,6 +26,11 @@ fi
 
 VERSION=$( grep 'VERSION=' dld-me-com.sh | grep -oE "[-0-9.]+" )
 
+if [ -z $DATA_DIR ]
+then
+  DATA_DIR=data
+fi
+
 if ./dld-user.sh "$username"
 then
   # complete
@@ -36,7 +41,7 @@ then
   domains="web.me.com public.me.com gallery.me.com homepage.mac.com"
   for domain in $domains
   do
-    userdir="data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
+    userdir="$DATA_DIR/${username:0:1}/${username:0:2}/${username:0:3}/${username}/${domain}"
     if [ -d $userdir ]
     then
       if du --help | grep -q apparent-size
@@ -57,7 +62,7 @@ then
 
   # some more statistics
   ids=($( grep -h -oE "<id>urn:apple:iserv:[^<]+" \
-            "data/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
+            "$DATA_DIR/${username:0:1}/${username:0:2}/${username:0:3}/${username}/"*"/webdav-feed.xml" \
             | cut -c 21- | sort | uniq ))
   id=0
   if [[ ${#ids[*]} -gt 0 ]]
