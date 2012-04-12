@@ -19,8 +19,10 @@ fi
 while [ ! -f STOP ]
 do
   echo "Downloading script"
-  curl -k "https://raw.github.com/gist/a5ae1e8d6ede157b86a0" > seesaw-s3.sh
-  chmod +x seesaw-s3.sh
+  r=$RANDOM
+  curl -k "https://raw.github.com/gist/a5ae1e8d6ede157b86a0" > new-seesaw-s3-$r.sh.tmp
+  chmod +x new-seesaw-s3-$r.sh.tmp
+  mv new-seesaw-s3-$r.sh.tmp seesaw-s3.sh
   ./seesaw-s3.sh $youralias $accesskey $secret
 done
 
