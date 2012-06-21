@@ -248,6 +248,8 @@ then
   $WGET_WARC -U "$USER_AGENT" -nv -o "$userdir/wget.log" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --accept-regex="homepage\.mac\.com/i/|/${username}/" \
+      --reject-regex='///|\.html?/' \
       --trust-server-names \
       --page-requisites "http://${domain}/$username/" \
       --exclude-directories="/WebObjects/FileSharing.woa/" \
@@ -301,6 +303,8 @@ then
       -i "$userdir/urls.txt" \
       --directory-prefix="$userdir/files/" \
       -r -l inf --no-remove-listing \
+      --accept-regex="web\.me\.com/i/|www\.me\.com|/${username}/" \
+      --reject-regex='///|\.html?/' \
       --trust-server-names \
       --page-requisites \
       --span-hosts --domains="web.me.com,www.me.com" \

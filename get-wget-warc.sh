@@ -18,12 +18,13 @@ then
   fi
 fi
 
-TARFILE=wget-1.13.4-2582.tar.bz2
-TARDIR=wget-1.13.4-2582
+TARFILE=wget-1.13.4.59-2b1dd.tar.bz2
+TARDIR=wget-1.13.4.59-2b1dd
 
 rm -rf $TARFILE $TARDIR/
 
-wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/$TARFILE
+# wget --no-check-certificate https://github.com/downloads/ArchiveTeam/mobileme-grab/$TARFILE
+wget --no-check-certificate http://alpha.gnu.org/gnu/wget/wget-1.13.4.59-2b1dd.tar.bz2
 tar xjf $TARFILE
 cd $TARDIR/
 if ./configure $CONFIGURE_SSL_OPT --disable-nls && make
